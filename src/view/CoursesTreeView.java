@@ -7,7 +7,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import utils.DesktopHelper;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
@@ -31,9 +31,10 @@ import model.IliasPdf;
 import model.IliasTreeNode;
 import model.IliasTreeProvider;
 import model.Settings;
+import utils.DesktopHelper;
 import control.LocalPdfStorage;
-import download.IliasPdfDownloadCaller;
 import download.IliasFolderDownloaderTask;
+import download.IliasPdfDownloadCaller;
 
 public class CoursesTreeView extends TreeView<IliasTreeNode> {
 	private final TreeItem<IliasTreeNode> rootItem;
@@ -248,34 +249,44 @@ public class CoursesTreeView extends TreeView<IliasTreeNode> {
 		
 		private void redraw(boolean addOptions, final IliasTreeNode node) {
 			final BorderPane pane = new BorderPane(); 
-			final Label box = new Label();
+			HBox box = new HBox(); 
+			final Label label = new Label();
 
 			if (node instanceof IliasFolder) {
 				IliasFolder folder = (IliasFolder) node;
 				if (LocalPdfStorage.getInstance().isFolderSynchronized(folder)) {
-					box.setGraphic(new ImageView("img/folder.png"));
+					label.setGraphic(new ImageView("img/folder.png"));
 				} else {
-					box.setGraphic(new ImageView("img/folder_pdf_not_there.png"));
+					label.setGraphic(new ImageView("img/folder_pdf_not_there.png"));
 				}
 			} else if (node instanceof IliasPdf) {
 				IliasPdf pdf = (IliasPdf) node;
 				if (pdf.isIgnored()) {
-					box.setGraphic(new ImageView("img/pdf_ignored.png"));
+					label.setGraphic(new ImageView("img/pdf_ignored.png"));
 				} else if (!(LocalPdfStorage.getInstance().contains(pdf))) {
-					box.setGraphic(new ImageView("img/pdf_local_not_there.png"));
+					label.setGraphic(new ImageView("img/pdf_local_not_there.png"));
 				} else {
-					box.setGraphic(new ImageView("img/pdf.png"));
+					label.setGraphic(new ImageView("img/pdf.png"));
 				}
+				addReadStatusButton(box, (IliasPdf)node); 
 			} else if (node instanceof IliasForum) {
-				box.setGraphic(new ImageView("img/forum.png"));
+				label.setGraphic(new ImageView("img/forum.png"));
 			}
 			
-			box.setText(node.toString());
+			label.setText(node.toString());
+			box.getChildren().add(label); 
 			pane.setLeft(box);
 			if (addOptions) {
 				createAndAddActions(node, pane);
 			}
 			setGraphic(pane);
+		}
+		
+		private void addReadStatusButton(HBox box, IliasPdf node) {
+			RadioButton readStatusButton = new RadioButton(); 
+			readStatusButton.setId("markAsReadButton");
+			readStatusButton.selectedProperty().bindBidirectional(node.isMarkedAsReadProperty());
+			box.getChildren().add(readStatusButton); 
 		}
 
 		private void createAndAddActions(final IliasTreeNode node, final BorderPane pane) {

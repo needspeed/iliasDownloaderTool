@@ -155,6 +155,39 @@
 	-fx-font-family: 		calibri;
 }
 
+
+
+#markAsReadButton .radio {
+    -fx-border-color: null;
+    -fx-background-color: null;
+    -fx-background-image: null;
+}
+#markAsReadButton .radio:selected {
+    -fx-background-color: null;
+    -fx-background-image: null;
+}
+#markAsReadButton -radio:armed {
+    -fx-background-color: null;
+    -fx-background-image: null;
+}
+#markAsReadButton -radio:determinate {
+    -fx-background-color: null;
+    -fx-background-image: null;
+}
+#markAsReadButton -radio:indeterminate {
+    -fx-background-color: null;
+    -fx-background-image: null;
+}
+#markAsReadButton .dot {
+    -fx-background-radius: 10;
+    -fx-background-color: grey; 
+    -fx-padding: 4;
+}
+
+#markAsReadButton .dot:selected {
+	-fx-background-color: linear-gradient(lightblue ,royalblue);  
+}
+
 #listView {
 	-fx-effect:				innershadow(three-pass-box , #4d4d4d , 6, 0.0 , 0 , 3 );
 	-fx-border-color: 		#4d4d4d; 

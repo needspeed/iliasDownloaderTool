@@ -1,13 +1,18 @@
 package model;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 
 public class IliasPdf extends IliasTreeNode {
 	private static final long serialVersionUID = -2841996600829969452L;
 	private final int size;
+	private BooleanProperty isMarkedAsRead; 
 
 	public IliasPdf(String name, String url, IliasFolder parentDirectory, int size) {
 		super(name, url, parentDirectory);
 		this.size = size;
+		initializeProperties();
 	}
 
 	public int getSize() {
@@ -29,6 +34,12 @@ public class IliasPdf extends IliasTreeNode {
 	public void setRead(boolean b) {
 
 	}
+	
+	public BooleanProperty isMarkedAsReadProperty() {
+		initializeProperties();
+		return isMarkedAsRead; 
+	}
+
 
 	private String createStoreKey() {
 		String key = getUrl();
@@ -36,5 +47,11 @@ public class IliasPdf extends IliasTreeNode {
 		final int endIndex = key.indexOf("&cmd=sendfile");
 		key = key.substring(beginIndex + 7, endIndex);
 		return key;
+	}
+
+	private void initializeProperties() {
+		if (isMarkedAsRead == null) {
+			isMarkedAsRead = new SimpleBooleanProperty(false); 
+		}
 	}
 }
