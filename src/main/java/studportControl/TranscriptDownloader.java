@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import model.Settings;
@@ -58,7 +59,7 @@ public class TranscriptDownloader implements Runnable {
 
 			if (!response.getLastHeader("Content-Type").getValue().contains("pdf")) {
 				System.out.println("TranscriptDownloader:52:download failed");
-				dashboard.setStatusText("Download fehlgeschlagen", true);
+				setStatusTextOnDashboard("Download fehlgeschlagen", true);
 			}
 
 			final InputStream pdfContent = response.getEntity().getContent();
@@ -87,11 +88,29 @@ public class TranscriptDownloader implements Runnable {
 			}
 		} catch (Exception e) {
 			studport.stopDownload();
-			dashboard.setStatusText("Download fehlgeschlagen", true);
+			setStatusTextOnDashboard("Download fehlgeschlagen", true);
 			System.out.println("TranscriptDownloader:88:download failed");
 		}
 		studport.stopDownload();
-		dashboard.setStatusText("Notenauszug wurde im lokalen Ilias Ordner gespeichert.");
+		setStatusTextOnDashboard("Notenauszug wurde im lokalen Ilias Ordner gespeichert.");
+	}
+	
+	private void setStatusTextOnDashboard(final String text) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				dashboard.setStatusText(text);
+			}
+		});
+	}
+	
+	private void setStatusTextOnDashboard(final String text, final boolean b) {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				dashboard.setStatusText(text, b);
+			}
+		});
 	}
 
 	private String openSaveDirectoryDialog() {

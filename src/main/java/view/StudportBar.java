@@ -14,7 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 import model.Settings;
 import studportControl.Studierendenportal;
-import studportControl.Transcript;
+import studportControl.TranscriptDescriptor;
 
 public class StudportBar extends GridPane {
 	private final Button[] transcripts;
@@ -29,10 +29,10 @@ public class StudportBar extends GridPane {
 		activeTransitions = new HashMap<Button, Transition>();
 		setHgap(10);
 		transcripts = new Button[4];
-		transcripts[0] = new Button(Transcript.ALLE_LEISTUNGEN_DEUTSCH);
-		transcripts[1] = new Button(Transcript.BESTANDEN_DEUTSCH);
-		transcripts[2] = new Button(Transcript.ALLE_LEISTUNGEN_ENGLISCH);
-		transcripts[3] = new Button(Transcript.BESTANDEN_ENGLISCH);
+		transcripts[0] = new Button(TranscriptDescriptor.ALLE_LEISTUNGEN_DEUTSCH);
+		transcripts[1] = new Button(TranscriptDescriptor.BESTANDEN_DEUTSCH);
+		transcripts[2] = new Button(TranscriptDescriptor.ALLE_LEISTUNGEN_ENGLISCH);
+		transcripts[3] = new Button(TranscriptDescriptor.BESTANDEN_ENGLISCH);
 		closeBarBtn = new Button("X");
 		closeBarBtn.setId("loginButtonCancel");
 		closeBarBtn.setOnAction(new EventHandler<ActionEvent>() {

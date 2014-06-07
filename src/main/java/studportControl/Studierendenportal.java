@@ -3,6 +3,7 @@ package studportControl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 
 import org.apache.http.Consts;
@@ -154,19 +155,19 @@ public class Studierendenportal implements Runnable {
 	public void downloadNotenauszug(String choice) {
 		String downloadPdfUrl = null;
 		switch (choice) {
-		case Transcript.ALLE_LEISTUNGEN_DEUTSCH:
+		case TranscriptDescriptor.ALLE_LEISTUNGEN_DEUTSCH:
 			filename = "Notenauszug-DE";
 			downloadPdfUrl = alleDe;
 			break;
-		case Transcript.ALLE_LEISTUNGEN_ENGLISCH:
+		case TranscriptDescriptor.ALLE_LEISTUNGEN_ENGLISCH:
 			filename = "Notenauszug-EN";
 			downloadPdfUrl = alleEn;
 			break;
-		case Transcript.BESTANDEN_DEUTSCH:
+		case TranscriptDescriptor.BESTANDEN_DEUTSCH:
 			filename = "Notenauszug-BE-DE";
 			downloadPdfUrl = alleBestandenDe;
 			break;
-		case Transcript.BESTANDEN_ENGLISCH:
+		case TranscriptDescriptor.BESTANDEN_ENGLISCH:
 			filename = "Notnauszug-BE-EN";
 			downloadPdfUrl = alleBestandenEn;
 			break;
@@ -193,6 +194,11 @@ public class Studierendenportal implements Runnable {
 	}
 
 	void stopDownload() {
-		studportBar.changeButtonstate(button, false);
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				studportBar.changeButtonstate(button, false);
+			}
+		});
 	}
 }
