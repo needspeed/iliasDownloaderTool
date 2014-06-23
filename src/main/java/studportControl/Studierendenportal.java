@@ -1,6 +1,7 @@
 package studportControl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javafx.application.Platform;
@@ -29,11 +30,12 @@ import view.StudportBar;
 
 public class Studierendenportal implements Runnable {
 
-	private final String cookieUrl = "https://campus.studium.kit.edu/";
+//	private final String startSite = "https://campus.studium.kit.edu/";
 	private final String loginUrl = "https://campus.studium.kit.edu/Shibboleth.sso/Login?target=https%3A//campus.studium.kit.edu/reports/examsextract.php";
 	private final String authnUrl = "https://idp.scc.kit.edu/idp/Authn/ExtUP";
 	private final String scriptUrl = "https://idp.scc.kit.edu/idp/profile/SAML2/Redirect/SSO";
 	private final String examExtractUrl = "https://campus.studium.kit.edu/reports/examsextract.php";
+	private final String url = "https://qis.studium.kit.edu/qissos-v160/rds?state=notenspiegelStudent&struct=auswahlBaum&navigation=Y&next=tree.vm&nextdir=qispos/notenspiegel/student&nodeID=auswahlBaum%7Cabschluss%3Aabschl%3D82%2Cstgnr%3D1&expand=0&lastState=notenspiegelStudent&asi=bG45iIkeqH3q.c6Epz8b#auswahlBaum%7Cabschluss%3Aabschl%3D82%2Cstgnr%3D1"; 
 
 	private String alleEn = null;
 	private String alleDe = null;
@@ -80,13 +82,17 @@ public class Studierendenportal implements Runnable {
 	public boolean login(String username, String password) {
 		try {
 
-			requestGET = new HttpGet(cookieUrl);
-			response = client.execute(requestGET, context);
-			requestGET.releaseConnection();
+//			// call first site to get cookies.
+//			requestGET = new HttpGet(startSite);
+//			response = client.execute(requestGET, context);
+//			requestGET.releaseConnection();
 
+			// login to Shibboleth Identity Provider
 			requestGET = new HttpGet(loginUrl);
 			response = client.execute(requestGET, context);
 			requestGET.releaseConnection();
+			System.out.println("FIRST:");
+			System.out.println(Arrays.toString(client.getCookieStore().getCookies().toArray())); 
 
 			List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 			nvps.add(new BasicNameValuePair("j_username", username));
@@ -95,8 +101,13 @@ public class Studierendenportal implements Runnable {
 			requestPOST = new HttpPost(authnUrl);
 			requestPOST.setEntity(new UrlEncodedFormEntity(nvps, Consts.UTF_8));
 			response = client.execute(requestPOST, context);
+			
+			String resp =  EntityUtils.toString(response.getEntity()); 
+			System.out.println("\n\nPOST: " + resp);
+			System.out.println("SECOND:");
+			System.out.println(Arrays.toString(client.getCookieStore().getCookies().toArray()));  
 
-			Document doc = Jsoup.parse(EntityUtils.toString(response.getEntity()));
+			Document doc = Jsoup.parse(resp);
 			final Elements value1 = doc.select("input[name=RelayState]");
 			String v1 = value1.attr("value");
 			final Elements value2 = doc.select("input[name=SAMLResponse]");
@@ -111,7 +122,15 @@ public class Studierendenportal implements Runnable {
 			response = client.execute(requestPOST, context);
 			System.out.println(EntityUtils.toString(response.getEntity()));
 			requestPOST.releaseConnection();
-
+			System.out.println("THIRD:");
+			System.out.println(Arrays.toString(client.getCookieStore().getCookies().toArray()));
+			
+//			requestGET = new HttpGet(url);
+//			response = client.execute(requestGET, context);
+//			requestGET.releaseConnection();
+//			System.out.println(EntityUtils.toString(response.getEntity()));
+			
+			
 			// if (htmlStartpage.contains("Sie sind nicht angemeldet")) {
 			// dashboard.setStatusText("Benutzerdaten falsch!", true);
 			// dashboard.fadeInLogin();
