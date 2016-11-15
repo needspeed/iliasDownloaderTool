@@ -4,3 +4,7 @@
 /.project
 /release
 /target
+.idea/
+Ilias.iml
+*swp
+*~
